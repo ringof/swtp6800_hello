@@ -6,49 +6,49 @@ M 0000				;start at 0000
 0000 CE 	LDX 0027 	;Load Index Register '0027', PROMPT TEXT address
 0001 00  
 0002 27
-0003 BD	JSR E07E 	;jump to subr @ E07E
+0003 BD		JSR E07E 	;jump to subr @ E07E
 0004 E0    			;E07E is the PDATA1 subroutine in SWTBUG ROM
 0005 7E    			;text is read out, 
 				;starting at address = index register 
 				;and continues until a 04 is seen
-0006 CE	LDX 0036 	;load Index Register '0036', start of user entered text 
+0006 CE		LDX 0036 	;load Index Register '0036', start of user entered text 
 0007 00
 0008 36
 				;CHARACTER READING LOOP
-0009 BD	JSR E1AC 	;jump to subr @ E1AC
-000A E1			;E1AC is the INEEE subroutine in the SWTBUG ROM
-000B AC			;it reads a character from the terminal and 
+0009 BD		JSR E1AC 	;jump to subr @ E1AC
+000A E1				;E1AC is the INEEE subroutine in the SWTBUG ROM
+000B AC				;it reads a character from the terminal and 
 				;stores it in the [A] register
-000C 81	CMP A, 0D	;Compare value of [A] to 0D (which is CR)
-000D 0D			;If the value of [A] = 0A, the zero flag is raised
+000C 81		CMP A, 0D	;Compare value of [A] to 0D (which is CR)
+000D 0D				;If the value of [A] = 0A, the zero flag is raised
 				;This tests: did we see a carrage return? 
-000E 27 	BEQ 05 	;Branch if zero flag raised--if zero flag, jump ahead PC = PC + 7
-000F 05			;BREAK CHARACTER READING LOOP and go to PC = 0015
-0010 A7	STA A 00  	;Store [A] into memory, at current index register + 0
-0011 00			;this saves the character read into the user entered text memory
-0012 08	INX 		;increment the index register by 1
+000E 27 	BEQ 05 		;Branch if zero flag raised--if zero flag, jump ahead PC = PC + 7
+000F 05				;BREAK CHARACTER READING LOOP and go to PC = 0015
+0010 A7		STA A 00	;Store [A] into memory, at current index register + 0
+0011 00				;this saves the character read into the user entered text memory
+0012 08		INX		;increment the index register by 1
 0013 20 	BRA F4  	;jump back to PC = 0009 into CHARACTER READING LOOP
 0014 F4
 				;continue from exited reading loop
-0015 86	LDA 04 	;jumped from PC = 000E
+0015 86		LDA 04 		;jumped from PC = 000E
 0016 04 			;load [A] <- 04
-0017 A7	STA 00 	;store [A] + 0 into memory at index register
-0018 00			;this effectively appends the terminator 04 to the user entered
+0017 A7		STA 00 		;store [A] + 0 into memory at index register
+0018 00				;this effectively appends the terminator 04 to the user entered
 				;text, needed for PDATA1 subroutine to stop printing
 				
 0019 CE 	LDX 0031 	;Load Index Register '0031', GREETING TEXT address
 001A 00
 001B 31 
 001C BD 	JSR E07E 	;Jump to SWTBUG PDATA1 subroutine @ E07E
-001D E0			;and start printing from 0031 onward until terminator	
-001E 7E			;this prints GREETING TEXT
-001F CE	LDX 0036 	;Load Index Register '0036'
+001D E0				;and start printing from 0031 onward until terminator	
+001E 7E				;this prints GREETING TEXT
+001F CE		LDX 0036 	;Load Index Register '0036'
 0020 00			
 0021 36			
 0022 BD 	JSR E07E 	;Jump to SWTBUG PDATA1 subroutine @ E07E
 0023 E0 			;and start printing from 0036 inward until terminator
 0024 7E 			;this prints user entered text
-0025 20 	BRA D9 	;Jump back to PC = 0000 - this is MAIN PROGRAM INFINITE LOOP
+0025 20 	BRA D9 		;Jump back to PC = 0000 - this is MAIN PROGRAM INFINITE LOOP
 0026 D9
 0027 0D  	CR 		;PROMPT TEXT
 0028 0A  	LF 		;CR-LF-LF-NAME? <terminator>
